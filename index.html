@@ -50,7 +50,6 @@
       z-index: 60;
     }
 
-    /* Glass tiers — hierarchy */
     .glass-header {
       background: rgba(255, 255, 255, 0.62);
       backdrop-filter: blur(48px) saturate(1.55);
@@ -61,7 +60,6 @@
         0 2px 8px rgba(0, 0, 0, 0.03),
         inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
-
     .glass-card {
       background: rgba(255, 255, 255, 0.38);
       backdrop-filter: blur(24px) saturate(1.35);
@@ -71,7 +69,6 @@
         0 4px 20px rgba(0, 0, 0, 0.04),
         inset 0 1px 0 rgba(255, 255, 255, 0.65);
     }
-
     .glass-deep {
       background: rgba(255, 255, 255, 0.55);
       backdrop-filter: blur(40px) saturate(1.5);
@@ -82,7 +79,6 @@
         0 4px 16px rgba(0, 0, 0, 0.04),
         inset 0 1px 0 rgba(255, 255, 255, 0.85);
     }
-
     .glass-soft {
       background: rgba(255, 255, 255, 0.35);
       backdrop-filter: blur(20px) saturate(1.3);
@@ -90,7 +86,6 @@
       border: 1px solid rgba(255, 255, 255, 0.55);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
     }
-
     .glass {
       background: rgba(255, 255, 255, 0.45);
       backdrop-filter: blur(28px) saturate(1.4);
@@ -111,6 +106,11 @@
     }
 
     /* Intro */
+    #intro-screen {
+      flex-direction: column;
+      gap: 3.5rem;
+    }
+
     #intro-screen .title {
       font-family: 'Instrument Serif', Georgia, serif;
       font-style: italic;
@@ -122,15 +122,58 @@
       opacity: 0;
       transform: translateY(28px) scale(0.96);
       will-change: opacity, transform;
-      animation:
-        titleIn 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards,
-        titleOut 1.6s cubic-bezier(0.4, 0, 0.2, 1) 2.6s forwards;
     }
+
+    #intro-screen.title-in .title {
+      animation: titleIn 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    #intro-screen.title-out .title {
+      animation: titleOut 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
     @keyframes titleIn {
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
     @keyframes titleOut {
       to { opacity: 0; transform: translateY(-16px) scale(1.02); filter: blur(6px); }
+    }
+
+    /* Loader — real progress */
+    .loader-wrap {
+      width: min(280px, 70vw);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .loader-wrap.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .loader-track {
+      height: 2px;
+      background: rgba(113, 113, 122, 0.2);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .loader-fill {
+      height: 100%;
+      width: 0%;
+      background: #3f3f46;
+      border-radius: 9999px;
+      transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .loader-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.65rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+      color: #a1a1aa;
+      text-transform: uppercase;
     }
 
     /* Login */
@@ -239,7 +282,7 @@
     }
     .link:hover { color: #18181b; }
 
-    /* ── Dashboard ── */
+    /* Dashboard */
     #dashboard-screen {
       opacity: 0;
       pointer-events: none;
@@ -248,10 +291,7 @@
       padding: 0;
       transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    #dashboard-screen.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    #dashboard-screen.visible { opacity: 1; pointer-events: auto; }
 
     .dash-shell {
       width: 100%;
@@ -271,9 +311,7 @@
       flex-shrink: 0;
     }
 
-    .section-label {
-      padding: 0 0.35rem;
-    }
+    .section-label { padding: 0 0.35rem; }
     .section-label h1 {
       font-size: 1.35rem;
       font-weight: 500;
@@ -296,20 +334,24 @@
       align-content: start;
     }
 
-    /* Host card — refined */
     .host-card {
       border-radius: 1.4rem;
       padding: 1.4rem 1.45rem 1.3rem;
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       transition:
         transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
         background 0.35s ease,
         box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
         border-color 0.35s ease;
     }
-
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
     .host-card:hover {
       transform: translateY(-5px);
       background: rgba(255, 255, 255, 0.55);
@@ -319,10 +361,7 @@
         0 6px 16px rgba(0, 0, 0, 0.04),
         inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
-
-    .host-card:active {
-      transform: translateY(-2px) scale(0.995);
-    }
+    .host-card:active { transform: translateY(-2px) scale(0.995); }
 
     .host-card-top {
       display: flex;
@@ -331,25 +370,21 @@
       gap: 0.75rem;
       margin-bottom: 1.15rem;
     }
-
     .host-identity {
       display: flex;
       align-items: center;
       gap: 0.7rem;
       min-width: 0;
     }
-
     .host-name {
       font-weight: 500;
       font-size: 0.95rem;
       letter-spacing: -0.015em;
       color: #18181b;
-      truncate: true;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     .host-status-label {
       font-size: 0.65rem;
       font-weight: 500;
@@ -358,13 +393,11 @@
       color: #a1a1aa;
       padding-top: 0.15rem;
     }
-
     .host-meta {
       display: flex;
       flex-direction: column;
       gap: 0.35rem;
     }
-
     .host-os {
       font-size: 0.8125rem;
       color: #52525b;
@@ -372,7 +405,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
     .host-row {
       display: flex;
       justify-content: space-between;
@@ -381,12 +413,7 @@
       font-size: 0.8125rem;
       color: #71717a;
     }
-
-    .host-user {
-      color: #a1a1aa;
-      font-variant-numeric: tabular-nums;
-    }
-
+    .host-user { color: #a1a1aa; }
     .host-footer {
       margin-top: 1rem;
       padding-top: 0.85rem;
@@ -398,7 +425,6 @@
       color: #a1a1aa;
     }
 
-    /* Status dots */
     .status-dot {
       width: 9px;
       height: 9px;
@@ -406,7 +432,6 @@
       flex-shrink: 0;
       position: relative;
     }
-
     .status-online {
       background: #34d399;
       box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.22);
@@ -419,35 +444,21 @@
       border: 1.5px solid rgba(52, 211, 153, 0.45);
       animation: pulse-ring 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
-
     .status-idle {
       background: #fbbf24;
       box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.22);
     }
-
     .status-offline {
       background: #a1a1aa;
       box-shadow: 0 0 0 3px rgba(161, 161, 170, 0.18);
       opacity: 0.85;
     }
-
     @keyframes pulse-ring {
       0% { transform: scale(0.85); opacity: 0.7; }
       70% { transform: scale(1.35); opacity: 0; }
       100% { transform: scale(1.35); opacity: 0; }
     }
 
-    /* Staggered card entrance */
-    .host-card {
-      opacity: 0;
-      transform: translateY(16px);
-      animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    @keyframes cardIn {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Host detail */
     #host-screen {
       opacity: 0;
       pointer-events: none;
@@ -456,10 +467,7 @@
       padding: 0;
       transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    #host-screen.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    #host-screen.visible { opacity: 1; pointer-events: auto; }
 
     .cmd-btn {
       display: flex;
@@ -515,9 +523,20 @@
   <div class="bg-layer"></div>
   <div class="noise"></div>
 
+  <audio id="intro-audio" preload="auto" playsinline></audio>
+
   <!-- INTRO -->
   <div id="intro-screen" class="screen">
     <h1 class="title">Spectre</h1>
+    <div class="loader-wrap" id="loader-wrap">
+      <div class="loader-track">
+        <div class="loader-fill" id="loader-fill"></div>
+      </div>
+      <div class="loader-meta">
+        <span id="loader-label">Loading assets</span>
+        <span id="loader-pct">0%</span>
+      </div>
+    </div>
   </div>
 
   <!-- LOGIN -->
@@ -540,7 +559,6 @@
           </div>
           <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password" value="spectre" />
         </div>
-
         <button type="submit" class="btn-primary mt-2">Continue</button>
       </form>
 
@@ -551,13 +569,11 @@
         Continue with GitHub
       </button>
 
-      <p class="mt-7 text-center text-xs text-zinc-500">
-        Demo: any credentials work · prefilled for speed
-      </p>
+      <p class="mt-7 text-center text-xs text-zinc-500">Demo: any credentials work · prefilled for speed</p>
     </div>
   </div>
 
-  <!-- DASHBOARD: Hosts -->
+  <!-- DASHBOARD -->
   <div id="dashboard-screen" class="screen">
     <div class="dash-shell">
       <header class="dash-header glass-header">
@@ -606,7 +622,6 @@
           <h2 class="text-sm font-medium text-zinc-600 mb-3">Commands</h2>
           <div class="grid sm:grid-cols-2 gap-2 overflow-y-auto pr-1" id="cmd-grid"></div>
         </div>
-
         <div class="glass-deep rounded-2xl p-5 flex flex-col min-h-0">
           <div class="flex items-center justify-between mb-3">
             <h2 class="text-sm font-medium text-zinc-600">Output</h2>
@@ -621,6 +636,186 @@
   </div>
 
   <script>
+    // ── Real asset loader ───────────────────────────────────────
+    const assets = [
+      { id: 'fonts', label: 'Typography', weight: 15 },
+      { id: 'audio', label: 'Intro audio', weight: 45 },
+      { id: 'manifest', label: 'Manifest', weight: 15 },
+      { id: 'icons', label: 'Interface', weight: 15 },
+      { id: 'ready', label: 'Finalizing', weight: 10 }
+    ];
+
+    let progress = 0;
+    const fill = document.getElementById('loader-fill');
+    const pctEl = document.getElementById('loader-pct');
+    const labelEl = document.getElementById('loader-label');
+    const loaderWrap = document.getElementById('loader-wrap');
+    const introScreen = document.getElementById('intro-screen');
+    const audioEl = document.getElementById('intro-audio');
+
+    function setProgress(p, label) {
+      progress = Math.min(100, Math.max(progress, p));
+      fill.style.width = progress + '%';
+      pctEl.textContent = Math.round(progress) + '%';
+      if (label) labelEl.textContent = label;
+    }
+
+    function loadFonts() {
+      return document.fonts.ready.then(() => {
+        // Force Instrument Serif + Inter to resolve
+        return Promise.all([
+          document.fonts.load('400 48px "Instrument Serif"'),
+          document.fonts.load('italic 400 48px "Instrument Serif"'),
+          document.fonts.load('400 16px Inter'),
+          document.fonts.load('500 16px Inter')
+        ]);
+      });
+    }
+
+    function loadAudio() {
+      return new Promise((resolve) => {
+        audioEl.src = 'assets/intro.mp3';
+        let settled = false;
+        const done = () => {
+          if (settled) return;
+          settled = true;
+          resolve();
+        };
+
+        audioEl.addEventListener('canplaythrough', done, { once: true });
+        audioEl.addEventListener('error', done, { once: true });
+
+        // Track download progress when available
+        fetch('assets/intro.mp3')
+          .then(async (res) => {
+            if (!res.ok) throw new Error('missing');
+            const reader = res.body.getReader();
+            const total = +res.headers.get('content-length') || 140000;
+            let received = 0;
+            while (true) {
+              const { done: d, value } = await reader.read();
+              if (d) break;
+              received += value.length;
+              const ratio = Math.min(1, received / total);
+              // audio is ~45% of total bar, fonts already counted
+              setProgress(15 + ratio * 40, 'Intro audio');
+            }
+            // Ensure decode
+            audioEl.load();
+          })
+          .catch(() => {
+            // File missing — still continue so UI isn't blocked
+            setProgress(55, 'Intro audio');
+            done();
+          });
+
+        // Safety timeout
+        setTimeout(done, 8000);
+      });
+    }
+
+    function loadManifest() {
+      // Small real JSON payload (could be host seed later)
+      const data = JSON.stringify({
+        version: '0.1.0',
+        codename: 'spectre',
+        hosts: 5,
+        build: Date.now()
+      });
+      return new Promise((resolve) => {
+        // Simulate parsing / storing
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        fetch(url).then(r => r.json()).then(() => {
+          URL.revokeObjectURL(url);
+          resolve();
+        });
+      });
+    }
+
+    function loadIcons() {
+      // Decode a few inline SVG data-URLs (real work for the browser)
+      const svgs = [
+        'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="12" fill="%2334d399"/></svg>'),
+        'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" rx="8" fill="%23a1a1aa"/></svg>'),
+        'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="%2327272a"/></svg>')
+      ];
+      return Promise.all(svgs.map(src => new Promise((res) => {
+        const img = new Image();
+        img.onload = img.onerror = () => res();
+        img.src = src;
+      })));
+    }
+
+    async function runLoader() {
+      loaderWrap.classList.add('visible');
+      introScreen.classList.add('title-in');
+
+      // Start audio as early as policy allows (may need gesture on some browsers)
+      try {
+        audioEl.volume = 0.55;
+        const playPromise = audioEl.play();
+        if (playPromise) playPromise.catch(() => {});
+      } catch (_) {}
+
+      setProgress(2, 'Typography');
+      await loadFonts();
+      setProgress(15, 'Typography');
+
+      setProgress(16, 'Intro audio');
+      await loadAudio();
+      setProgress(60, 'Intro audio');
+
+      // Try play again once buffered
+      try { await audioEl.play(); } catch (_) {}
+
+      setProgress(62, 'Manifest');
+      await loadManifest();
+      setProgress(75, 'Manifest');
+
+      setProgress(78, 'Interface');
+      await loadIcons();
+      setProgress(90, 'Interface');
+
+      setProgress(92, 'Finalizing');
+      await new Promise(r => setTimeout(r, 400));
+      setProgress(100, 'Ready');
+
+      // Hold a beat on 100% so the last of the intro can breathe
+      await new Promise(r => setTimeout(r, 900));
+
+      introScreen.classList.add('title-out');
+      loaderWrap.style.opacity = '0';
+
+      await new Promise(r => setTimeout(r, 1200));
+
+      // Fade audio out gently into login
+      fadeAudioOut();
+
+      document.getElementById('login-screen').classList.add('visible');
+    }
+
+    function fadeAudioOut() {
+      if (!audioEl) return;
+      const start = audioEl.volume;
+      const steps = 24;
+      let i = 0;
+      const tick = () => {
+        i++;
+        audioEl.volume = Math.max(0, start * (1 - i / steps));
+        if (i < steps) requestAnimationFrame(tick);
+        else {
+          audioEl.pause();
+          audioEl.currentTime = 0;
+        }
+      };
+      requestAnimationFrame(tick);
+    }
+
+    // Kick off after a frame so CSS is ready
+    requestAnimationFrame(() => runLoader());
+
+    // ── Rest of app (unchanged logic) ───────────────────────────
     const hosts = [
       { id: 'h1', name: 'WORKSTATION-04', os: 'Windows 11 Pro', ip: '10.0.14.22', user: 'j.miller', status: 'online', lastSeen: 'Just now', latency: '18 ms' },
       { id: 'h2', name: 'macbook-pro-m2', os: 'macOS Sequoia', ip: '10.0.14.41', user: 'a.chen', status: 'online', lastSeen: '12s ago', latency: '24 ms' },
@@ -656,26 +851,21 @@
     };
 
     let currentHost = null;
-
-    const intro = document.getElementById('intro-screen');
     const login = document.getElementById('login-screen');
     const dash = document.getElementById('dashboard-screen');
     const hostScreen = document.getElementById('host-screen');
-
-    setTimeout(() => login.classList.add('visible'), 3000);
 
     function handleLogin(e) {
       e.preventDefault();
       const btn = e.target.querySelector('button[type="submit"]');
       btn.textContent = 'Entering…';
       btn.disabled = true;
-
       setTimeout(() => {
         login.classList.add('fade-out');
         setTimeout(() => {
           login.classList.remove('visible', 'fade-out');
           login.style.display = 'none';
-          intro.style.display = 'none';
+          introScreen.style.display = 'none';
           renderHosts();
           dash.classList.add('visible');
         }, 700);
@@ -686,9 +876,7 @@
 
     function renderHosts() {
       const grid = document.getElementById('host-grid');
-      const online = hosts.filter(h => h.status === 'online').length;
-      document.getElementById('online-count').textContent = online;
-
+      document.getElementById('online-count').textContent = hosts.filter(h => h.status === 'online').length;
       grid.innerHTML = hosts.map((h, i) => `
         <div class="host-card glass-card" style="animation-delay: ${0.08 + i * 0.07}s" onclick="openHost('${h.id}')">
           <div class="host-card-top">
@@ -716,23 +904,16 @@
     function openHost(id) {
       currentHost = hosts.find(h => h.id === id);
       if (!currentHost) return;
-
       document.getElementById('host-name').textContent = currentHost.name;
-      document.getElementById('host-meta').textContent =
-        `${currentHost.os} · ${currentHost.ip} · ${currentHost.user}`;
-
-      const dot = document.getElementById('host-status-dot');
-      dot.className = `status-dot status-${currentHost.status}`;
-
+      document.getElementById('host-meta').textContent = `${currentHost.os} · ${currentHost.ip} · ${currentHost.user}`;
+      document.getElementById('host-status-dot').className = `status-dot status-${currentHost.status}`;
       document.getElementById('cmd-grid').innerHTML = commands.map(c => `
         <button class="cmd-btn glass-soft" onclick="runCommand('${c.id}')">
           <span class="font-medium text-zinc-800 text-sm">${c.label}</span>
           <span class="text-xs text-zinc-500">${c.desc}</span>
         </button>
       `).join('');
-
       document.getElementById('output').textContent = 'Ready. Select a command.';
-
       dash.classList.remove('visible');
       setTimeout(() => hostScreen.classList.add('visible'), 200);
     }
@@ -752,7 +933,6 @@
         .replaceAll('{{ip}}', h.ip)
         .replaceAll('{{id}}', h.id)
         .replaceAll('{{lastSeen}}', h.lastSeen);
-
       const out = document.getElementById('output');
       out.textContent = 'Running…';
       setTimeout(() => { out.textContent = text; }, 350 + Math.random() * 400);
