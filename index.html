@@ -105,7 +105,6 @@
       z-index: 10;
     }
 
-    /* Intro — original smooth fade */
     #intro-screen .title {
       font-family: 'Instrument Serif', Georgia, serif;
       font-style: italic;
@@ -121,7 +120,6 @@
         titleIn 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards,
         titleOut 1.6s cubic-bezier(0.4, 0, 0.2, 1) 2.6s forwards;
     }
-
     @keyframes titleIn {
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
@@ -129,7 +127,6 @@
       to { opacity: 0; transform: translateY(-16px) scale(1.02); filter: blur(6px); }
     }
 
-    /* Login */
     #login-screen {
       opacity: 0;
       pointer-events: none;
@@ -172,7 +169,7 @@
     #login-screen.visible .login-card > *:nth-child(4) { transition-delay: 0.55s; }
     #login-screen.visible .login-card > *:nth-child(5) { transition-delay: 0.65s; }
 
-    input {
+    input, select, textarea {
       width: 100%;
       padding: 0.85rem 1.1rem;
       border-radius: 0.9rem;
@@ -182,17 +179,24 @@
       font-size: 0.925rem;
       color: #18181b;
       outline: none;
+      font-family: inherit;
       transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
     }
-    input::placeholder { color: #a1a1aa; }
-    input:focus {
+    input::placeholder, textarea::placeholder { color: #a1a1aa; }
+    input:focus, select:focus, textarea:focus {
       background: rgba(255, 255, 255, 0.75);
       border-color: rgba(113, 113, 122, 0.4);
       box-shadow: 0 0 0 3px rgba(113, 113, 122, 0.12);
     }
+    select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
 
     .btn-primary {
-      width: 100%;
       padding: 0.9rem 1.25rem;
       border-radius: 0.9rem;
       background: #27272a;
@@ -203,10 +207,29 @@
       cursor: pointer;
       transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
       box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+      font-family: inherit;
     }
     .btn-primary:hover { background: #18181b; box-shadow: 0 6px 20px rgba(0,0,0,0.16); }
     .btn-primary:active { transform: scale(0.985); }
     .btn-primary:disabled { opacity: 0.7; cursor: wait; }
+
+    .btn-ghost {
+      padding: 0.65rem 1rem;
+      border-radius: 0.75rem;
+      background: transparent;
+      border: 1px solid rgba(113, 113, 122, 0.2);
+      color: #52525b;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,0.5);
+      color: #18181b;
+      border-color: rgba(113, 113, 122, 0.35);
+    }
 
     .divider {
       display: flex;
@@ -235,16 +258,40 @@
     }
     .link:hover { color: #18181b; }
 
-    /* Dashboard */
-    #dashboard-screen {
+    .nav-link {
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: #71717a;
+      padding: 0.4rem 0.85rem;
+      border-radius: 0.65rem;
+      transition: color 0.2s ease, background 0.2s ease;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .nav-link:hover { color: #18181b; background: rgba(255,255,255,0.45); }
+    .nav-link.active {
+      color: #18181b;
+      background: rgba(255,255,255,0.55);
+    }
+
+    #dashboard-screen,
+    #forge-screen,
+    #host-screen {
       opacity: 0;
       pointer-events: none;
       align-items: stretch;
       justify-content: stretch;
       padding: 0;
-      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    #dashboard-screen.visible { opacity: 1; pointer-events: auto; }
+    #dashboard-screen.visible,
+    #forge-screen.visible,
+    #host-screen.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
     .dash-shell {
       width: 100%;
@@ -412,16 +459,6 @@
       100% { transform: scale(1.35); opacity: 0; }
     }
 
-    #host-screen {
-      opacity: 0;
-      pointer-events: none;
-      align-items: stretch;
-      justify-content: stretch;
-      padding: 0;
-      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    #host-screen.visible { opacity: 1; pointer-events: auto; }
-
     .cmd-btn {
       display: flex;
       flex-direction: column;
@@ -470,6 +507,114 @@
       background: rgba(255,255,255,0.5);
       color: #18181b;
     }
+
+    /* Forge */
+    .forge-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.15rem;
+      min-h: 0;
+      overflow: hidden;
+    }
+    @media (max-width: 900px) {
+      .forge-layout { grid-template-columns: 1fr; overflow-y: auto; }
+    }
+
+    .forge-panel {
+      border-radius: 1.4rem;
+      padding: 1.5rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .field {
+      margin-bottom: 1.1rem;
+    }
+    .field label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #71717a;
+      margin-bottom: 0.45rem;
+      margin-left: 0.15rem;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-radius: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+    .toggle-row span {
+      font-size: 0.875rem;
+      color: #3f3f46;
+    }
+
+    .switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+    .switch .track {
+      position: absolute;
+      inset: 0;
+      background: rgba(113, 113, 122, 0.25);
+      border-radius: 9999px;
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
+    .switch .thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 9999px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      transition: transform 0.2s ease;
+      pointer-events: none;
+    }
+    .switch input:checked + .track {
+      background: #27272a;
+    }
+    .switch input:checked + .track .thumb {
+      transform: translateX(18px);
+    }
+
+    .build-log {
+      flex: 1;
+      overflow-y: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: #3f3f46;
+      white-space: pre-wrap;
+    }
+    .build-log .ok { color: #059669; }
+    .build-log .dim { color: #a1a1aa; }
+
+    .build-result {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(113, 113, 122, 0.12);
+      display: none;
+    }
+    .build-result.show { display: block; }
   </style>
 </head>
 <body>
@@ -488,40 +633,38 @@
         <h2 class="font-serif italic text-3xl text-zinc-800 tracking-tight">Spectre</h2>
         <p class="mt-2 text-sm text-zinc-500">Sign in to continue</p>
       </div>
-
       <form id="login-form" class="space-y-4" onsubmit="handleLogin(event)">
         <div>
           <label class="block text-xs font-medium text-zinc-500 mb-1.5 ml-0.5">Email</label>
-          <input type="email" name="email" placeholder="you@example.com" required autocomplete="email" value="operator@spectre.local" />
+          <input type="email" name="email" placeholder="you@example.com" required value="operator@spectre.local" />
         </div>
         <div>
           <div class="flex items-center justify-between mb-1.5">
             <label class="text-xs font-medium text-zinc-500 ml-0.5">Password</label>
             <a href="#" class="link">Forgot?</a>
           </div>
-          <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password" value="spectre" />
+          <input type="password" name="password" placeholder="••••••••" required value="spectre" />
         </div>
-        <button type="submit" class="btn-primary mt-2">Continue</button>
+        <button type="submit" class="btn-primary w-full mt-2">Continue</button>
       </form>
-
       <div class="divider my-6">or</div>
-
       <button type="button" class="w-full py-2.5 rounded-xl glass text-sm font-medium text-zinc-700 hover:bg-white/60 transition flex items-center justify-center gap-2">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="opacity-70"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
         Continue with GitHub
       </button>
-
       <p class="mt-7 text-center text-xs text-zinc-500">Demo: any credentials work · prefilled for speed</p>
     </div>
   </div>
 
-  <!-- DASHBOARD -->
+  <!-- DASHBOARD: Hosts -->
   <div id="dashboard-screen" class="screen">
     <div class="dash-shell">
       <header class="dash-header glass-header">
         <div class="flex items-center gap-3">
           <span class="font-serif italic text-xl text-zinc-800 tracking-tight">Spectre</span>
-          <span class="text-[11px] font-medium text-zinc-500 px-2.5 py-1 rounded-full glass-soft tracking-wide">operator</span>
+          <nav class="flex items-center gap-1 ml-2">
+            <button class="nav-link active" onclick="showHosts()">Hosts</button>
+            <button class="nav-link" onclick="showForge()">Forge</button>
+          </nav>
         </div>
         <div class="flex items-center gap-5 text-sm text-zinc-500">
           <span class="flex items-center gap-1.5">
@@ -538,6 +681,114 @@
       </div>
 
       <div class="host-grid" id="host-grid"></div>
+    </div>
+  </div>
+
+  <!-- FORGE -->
+  <div id="forge-screen" class="screen">
+    <div class="dash-shell">
+      <header class="dash-header glass-header">
+        <div class="flex items-center gap-3">
+          <span class="font-serif italic text-xl text-zinc-800 tracking-tight">Spectre</span>
+          <nav class="flex items-center gap-1 ml-2">
+            <button class="nav-link" onclick="showHosts()">Hosts</button>
+            <button class="nav-link active" onclick="showForge()">Forge</button>
+          </nav>
+        </div>
+        <div class="flex items-center gap-5 text-sm text-zinc-500">
+          <button onclick="logout()" class="link">Sign out</button>
+        </div>
+      </header>
+
+      <div class="section-label">
+        <h1>Forge</h1>
+        <p>Build a deployable file</p>
+      </div>
+
+      <div class="forge-layout">
+        <!-- Config -->
+        <div class="forge-panel glass-deep">
+          <div class="field">
+            <label>File name</label>
+            <input type="text" id="forge-name" value="spectre-agent" placeholder="my-build" />
+          </div>
+
+          <div class="field">
+            <label>Platform</label>
+            <select id="forge-platform">
+              <option value="windows">Windows (x64)</option>
+              <option value="linux">Linux (x64)</option>
+              <option value="macos">macOS (arm64)</option>
+              <option value="macos-intel">macOS (x64)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Format</label>
+            <select id="forge-format">
+              <option value="exe">.exe</option>
+              <option value="dll">.dll</option>
+              <option value="bin">raw binary</option>
+              <option value="shellcode">shellcode</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Options</label>
+            <div class="toggle-row glass-soft">
+              <span>Strip symbols</span>
+              <label class="switch">
+                <input type="checkbox" id="opt-strip" checked />
+                <span class="track"><span class="thumb"></span></span>
+              </label>
+            </div>
+            <div class="toggle-row glass-soft">
+              <span>Compress</span>
+              <label class="switch">
+                <input type="checkbox" id="opt-compress" checked />
+                <span class="track"><span class="thumb"></span></span>
+              </label>
+            </div>
+            <div class="toggle-row glass-soft">
+              <span>Debug symbols</span>
+              <label class="switch">
+                <input type="checkbox" id="opt-debug" />
+                <span class="track"><span class="thumb"></span></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="field" style="margin-bottom:0">
+            <label>Notes</label>
+            <textarea id="forge-notes" rows="2" placeholder="Optional build notes…"></textarea>
+          </div>
+
+          <div class="mt-5 flex gap-2">
+            <button class="btn-primary flex-1" id="build-btn" onclick="runBuild()">Build</button>
+            <button class="btn-ghost" onclick="resetForge()">Reset</button>
+          </div>
+        </div>
+
+        <!-- Log / result -->
+        <div class="forge-panel glass-deep">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-medium text-zinc-600">Build output</h2>
+            <button class="text-xs text-zinc-400 hover:text-zinc-600 transition" onclick="clearBuildLog()">Clear</button>
+          </div>
+          <div class="glass-soft rounded-xl p-4 flex-1 overflow-hidden flex flex-col min-h-0">
+            <div class="build-log" id="build-log"><span class="dim">Ready to build.</span></div>
+          </div>
+          <div class="build-result" id="build-result">
+            <div class="flex items-center justify-between gap-3">
+              <div class="min-w-0">
+                <div class="text-sm font-medium text-zinc-800 truncate" id="result-name">—</div>
+                <div class="text-xs text-zinc-500 mt-0.5" id="result-meta">—</div>
+              </div>
+              <button class="btn-primary" style="padding:0.65rem 1.1rem;font-size:0.8125rem" onclick="downloadBuild()">Download</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -613,16 +864,21 @@
     };
 
     let currentHost = null;
+    let lastBuild = null;
 
     const intro = document.getElementById('intro-screen');
     const login = document.getElementById('login-screen');
     const dash = document.getElementById('dashboard-screen');
+    const forge = document.getElementById('forge-screen');
     const hostScreen = document.getElementById('host-screen');
 
-    // Title fades via CSS (titleOut at 2.6s); reveal login as it disappears
-    setTimeout(() => {
-      login.classList.add('visible');
-    }, 3000);
+    setTimeout(() => login.classList.add('visible'), 3000);
+
+    function hideAllApp() {
+      dash.classList.remove('visible');
+      forge.classList.remove('visible');
+      hostScreen.classList.remove('visible');
+    }
 
     function handleLogin(e) {
       e.preventDefault();
@@ -642,6 +898,19 @@
     }
 
     function logout() { location.reload(); }
+
+    function showHosts() {
+      hideAllApp();
+      setTimeout(() => {
+        renderHosts();
+        dash.classList.add('visible');
+      }, 150);
+    }
+
+    function showForge() {
+      hideAllApp();
+      setTimeout(() => forge.classList.add('visible'), 150);
+    }
 
     function renderHosts() {
       const grid = document.getElementById('host-grid');
@@ -683,13 +952,16 @@
         </button>
       `).join('');
       document.getElementById('output').textContent = 'Ready. Select a command.';
-      dash.classList.remove('visible');
-      setTimeout(() => hostScreen.classList.add('visible'), 200);
+      hideAllApp();
+      setTimeout(() => hostScreen.classList.add('visible'), 150);
     }
 
     function backToHosts() {
       hostScreen.classList.remove('visible');
-      setTimeout(() => dash.classList.add('visible'), 200);
+      setTimeout(() => {
+        renderHosts();
+        dash.classList.add('visible');
+      }, 150);
     }
 
     function runCommand(id) {
@@ -709,6 +981,102 @@
 
     function clearOutput() {
       document.getElementById('output').textContent = 'Ready. Select a command.';
+    }
+
+    // ── Forge ───────────────────────────────────────────────────
+    function logLine(html) {
+      const el = document.getElementById('build-log');
+      if (el.querySelector('.dim') && el.textContent.includes('Ready')) el.innerHTML = '';
+      el.innerHTML += html + '\n';
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function clearBuildLog() {
+      document.getElementById('build-log').innerHTML = '<span class="dim">Ready to build.</span>';
+      document.getElementById('build-result').classList.remove('show');
+      lastBuild = null;
+    }
+
+    function resetForge() {
+      document.getElementById('forge-name').value = 'spectre-agent';
+      document.getElementById('forge-platform').value = 'windows';
+      document.getElementById('forge-format').value = 'exe';
+      document.getElementById('opt-strip').checked = true;
+      document.getElementById('opt-compress').checked = true;
+      document.getElementById('opt-debug').checked = false;
+      document.getElementById('forge-notes').value = '';
+      clearBuildLog();
+    }
+
+    function runBuild() {
+      const name = (document.getElementById('forge-name').value || 'spectre-agent').trim();
+      const platform = document.getElementById('forge-platform').value;
+      const format = document.getElementById('forge-format').value;
+      const strip = document.getElementById('opt-strip').checked;
+      const compress = document.getElementById('opt-compress').checked;
+      const debug = document.getElementById('opt-debug').checked;
+      const notes = document.getElementById('forge-notes').value.trim();
+
+      const btn = document.getElementById('build-btn');
+      btn.disabled = true;
+      btn.textContent = 'Building…';
+      document.getElementById('build-result').classList.remove('show');
+      document.getElementById('build-log').innerHTML = '';
+
+      const ext = format === 'exe' ? '.exe' : format === 'dll' ? '.dll' : format === 'bin' ? '.bin' : '.bin';
+      const filename = name + ext;
+      const platformLabel = {
+        windows: 'Windows x64',
+        linux: 'Linux x64',
+        macos: 'macOS arm64',
+        'macos-intel': 'macOS x64'
+      }[platform];
+
+      const steps = [
+        { t: 200, msg: `<span class="dim">$</span> forge build --name ${name}` },
+        { t: 500, msg: `target    ${platformLabel}` },
+        { t: 800, msg: `format    ${format}` },
+        { t: 1100, msg: strip ? 'strip     enabled' : 'strip     skipped' },
+        { t: 1400, msg: compress ? 'compress  enabled' : 'compress  skipped' },
+        { t: 1700, msg: debug ? 'debug     enabled' : 'debug     off' },
+        { t: 2100, msg: notes ? `notes     ${notes}` : null },
+        { t: 2500, msg: 'compiling…' },
+        { t: 3200, msg: 'linking…' },
+        { t: 3800, msg: compress ? 'compressing…' : null },
+        { t: 4400, msg: `<span class="ok">✓</span> built ${filename}` },
+        { t: 4600, msg: `<span class="dim">size  ${(120 + Math.random() * 80).toFixed(1)} KB (placeholder)</span>` }
+      ];
+
+      steps.forEach(({ t, msg }) => {
+        if (!msg) return;
+        setTimeout(() => logLine(msg), t);
+      });
+
+      setTimeout(() => {
+        lastBuild = {
+          filename,
+          platform: platformLabel,
+          format,
+          size: (120 + Math.random() * 80).toFixed(1) + ' KB',
+          content: `Spectre build placeholder\nname=${name}\nplatform=${platform}\nformat=${format}\nstrip=${strip}\ncompress=${compress}\ndebug=${debug}\nnotes=${notes}\n`
+        };
+        document.getElementById('result-name').textContent = filename;
+        document.getElementById('result-meta').textContent = `${platformLabel} · ${lastBuild.size}`;
+        document.getElementById('build-result').classList.add('show');
+        btn.disabled = false;
+        btn.textContent = 'Build';
+      }, 4800);
+    }
+
+    function downloadBuild() {
+      if (!lastBuild) return;
+      const blob = new Blob([lastBuild.content], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = lastBuild.filename;
+      a.click();
+      URL.revokeObjectURL(url);
     }
   </script>
 </body>
