@@ -105,12 +105,7 @@
       z-index: 10;
     }
 
-    /* Intro */
-    #intro-screen {
-      flex-direction: column;
-      gap: 3.5rem;
-    }
-
+    /* Intro — original smooth fade */
     #intro-screen .title {
       font-family: 'Instrument Serif', Georgia, serif;
       font-style: italic;
@@ -122,14 +117,9 @@
       opacity: 0;
       transform: translateY(28px) scale(0.96);
       will-change: opacity, transform;
-    }
-
-    #intro-screen.title-in .title {
-      animation: titleIn 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    #intro-screen.title-out .title {
-      animation: titleOut 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      animation:
+        titleIn 1.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards,
+        titleOut 1.6s cubic-bezier(0.4, 0, 0.2, 1) 2.6s forwards;
     }
 
     @keyframes titleIn {
@@ -137,43 +127,6 @@
     }
     @keyframes titleOut {
       to { opacity: 0; transform: translateY(-16px) scale(1.02); filter: blur(6px); }
-    }
-
-    /* Loader — real progress */
-    .loader-wrap {
-      width: min(280px, 70vw);
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .loader-wrap.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .loader-track {
-      height: 2px;
-      background: rgba(113, 113, 122, 0.2);
-      border-radius: 9999px;
-      overflow: hidden;
-    }
-
-    .loader-fill {
-      height: 100%;
-      width: 0%;
-      background: #3f3f46;
-      border-radius: 9999px;
-      transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .loader-meta {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 0.65rem;
-      font-size: 0.7rem;
-      letter-spacing: 0.04em;
-      color: #a1a1aa;
-      text-transform: uppercase;
     }
 
     /* Login */
@@ -523,20 +476,9 @@
   <div class="bg-layer"></div>
   <div class="noise"></div>
 
-  <audio id="intro-audio" preload="auto" playsinline></audio>
-
   <!-- INTRO -->
   <div id="intro-screen" class="screen">
     <h1 class="title">Spectre</h1>
-    <div class="loader-wrap" id="loader-wrap">
-      <div class="loader-track">
-        <div class="loader-fill" id="loader-fill"></div>
-      </div>
-      <div class="loader-meta">
-        <span id="loader-label">Loading assets</span>
-        <span id="loader-pct">0%</span>
-      </div>
-    </div>
   </div>
 
   <!-- LOGIN -->
@@ -636,186 +578,6 @@
   </div>
 
   <script>
-    // ── Real asset loader ───────────────────────────────────────
-    const assets = [
-      { id: 'fonts', label: 'Typography', weight: 15 },
-      { id: 'audio', label: 'Intro audio', weight: 45 },
-      { id: 'manifest', label: 'Manifest', weight: 15 },
-      { id: 'icons', label: 'Interface', weight: 15 },
-      { id: 'ready', label: 'Finalizing', weight: 10 }
-    ];
-
-    let progress = 0;
-    const fill = document.getElementById('loader-fill');
-    const pctEl = document.getElementById('loader-pct');
-    const labelEl = document.getElementById('loader-label');
-    const loaderWrap = document.getElementById('loader-wrap');
-    const introScreen = document.getElementById('intro-screen');
-    const audioEl = document.getElementById('intro-audio');
-
-    function setProgress(p, label) {
-      progress = Math.min(100, Math.max(progress, p));
-      fill.style.width = progress + '%';
-      pctEl.textContent = Math.round(progress) + '%';
-      if (label) labelEl.textContent = label;
-    }
-
-    function loadFonts() {
-      return document.fonts.ready.then(() => {
-        // Force Instrument Serif + Inter to resolve
-        return Promise.all([
-          document.fonts.load('400 48px "Instrument Serif"'),
-          document.fonts.load('italic 400 48px "Instrument Serif"'),
-          document.fonts.load('400 16px Inter'),
-          document.fonts.load('500 16px Inter')
-        ]);
-      });
-    }
-
-    function loadAudio() {
-      return new Promise((resolve) => {
-        audioEl.src = 'assets/intro.mp3';
-        let settled = false;
-        const done = () => {
-          if (settled) return;
-          settled = true;
-          resolve();
-        };
-
-        audioEl.addEventListener('canplaythrough', done, { once: true });
-        audioEl.addEventListener('error', done, { once: true });
-
-        // Track download progress when available
-        fetch('assets/intro.mp3')
-          .then(async (res) => {
-            if (!res.ok) throw new Error('missing');
-            const reader = res.body.getReader();
-            const total = +res.headers.get('content-length') || 140000;
-            let received = 0;
-            while (true) {
-              const { done: d, value } = await reader.read();
-              if (d) break;
-              received += value.length;
-              const ratio = Math.min(1, received / total);
-              // audio is ~45% of total bar, fonts already counted
-              setProgress(15 + ratio * 40, 'Intro audio');
-            }
-            // Ensure decode
-            audioEl.load();
-          })
-          .catch(() => {
-            // File missing — still continue so UI isn't blocked
-            setProgress(55, 'Intro audio');
-            done();
-          });
-
-        // Safety timeout
-        setTimeout(done, 8000);
-      });
-    }
-
-    function loadManifest() {
-      // Small real JSON payload (could be host seed later)
-      const data = JSON.stringify({
-        version: '0.1.0',
-        codename: 'spectre',
-        hosts: 5,
-        build: Date.now()
-      });
-      return new Promise((resolve) => {
-        // Simulate parsing / storing
-        const blob = new Blob([data], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        fetch(url).then(r => r.json()).then(() => {
-          URL.revokeObjectURL(url);
-          resolve();
-        });
-      });
-    }
-
-    function loadIcons() {
-      // Decode a few inline SVG data-URLs (real work for the browser)
-      const svgs = [
-        'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="12" fill="%2334d399"/></svg>'),
-        'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" rx="8" fill="%23a1a1aa"/></svg>'),
-        'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><path d="M12 2L2 7l10 5 10-5-10-5z" fill="%2327272a"/></svg>')
-      ];
-      return Promise.all(svgs.map(src => new Promise((res) => {
-        const img = new Image();
-        img.onload = img.onerror = () => res();
-        img.src = src;
-      })));
-    }
-
-    async function runLoader() {
-      loaderWrap.classList.add('visible');
-      introScreen.classList.add('title-in');
-
-      // Start audio as early as policy allows (may need gesture on some browsers)
-      try {
-        audioEl.volume = 0.55;
-        const playPromise = audioEl.play();
-        if (playPromise) playPromise.catch(() => {});
-      } catch (_) {}
-
-      setProgress(2, 'Typography');
-      await loadFonts();
-      setProgress(15, 'Typography');
-
-      setProgress(16, 'Intro audio');
-      await loadAudio();
-      setProgress(60, 'Intro audio');
-
-      // Try play again once buffered
-      try { await audioEl.play(); } catch (_) {}
-
-      setProgress(62, 'Manifest');
-      await loadManifest();
-      setProgress(75, 'Manifest');
-
-      setProgress(78, 'Interface');
-      await loadIcons();
-      setProgress(90, 'Interface');
-
-      setProgress(92, 'Finalizing');
-      await new Promise(r => setTimeout(r, 400));
-      setProgress(100, 'Ready');
-
-      // Hold a beat on 100% so the last of the intro can breathe
-      await new Promise(r => setTimeout(r, 900));
-
-      introScreen.classList.add('title-out');
-      loaderWrap.style.opacity = '0';
-
-      await new Promise(r => setTimeout(r, 1200));
-
-      // Fade audio out gently into login
-      fadeAudioOut();
-
-      document.getElementById('login-screen').classList.add('visible');
-    }
-
-    function fadeAudioOut() {
-      if (!audioEl) return;
-      const start = audioEl.volume;
-      const steps = 24;
-      let i = 0;
-      const tick = () => {
-        i++;
-        audioEl.volume = Math.max(0, start * (1 - i / steps));
-        if (i < steps) requestAnimationFrame(tick);
-        else {
-          audioEl.pause();
-          audioEl.currentTime = 0;
-        }
-      };
-      requestAnimationFrame(tick);
-    }
-
-    // Kick off after a frame so CSS is ready
-    requestAnimationFrame(() => runLoader());
-
-    // ── Rest of app (unchanged logic) ───────────────────────────
     const hosts = [
       { id: 'h1', name: 'WORKSTATION-04', os: 'Windows 11 Pro', ip: '10.0.14.22', user: 'j.miller', status: 'online', lastSeen: 'Just now', latency: '18 ms' },
       { id: 'h2', name: 'macbook-pro-m2', os: 'macOS Sequoia', ip: '10.0.14.41', user: 'a.chen', status: 'online', lastSeen: '12s ago', latency: '24 ms' },
@@ -851,9 +613,16 @@
     };
 
     let currentHost = null;
+
+    const intro = document.getElementById('intro-screen');
     const login = document.getElementById('login-screen');
     const dash = document.getElementById('dashboard-screen');
     const hostScreen = document.getElementById('host-screen');
+
+    // Title fades via CSS (titleOut at 2.6s); reveal login as it disappears
+    setTimeout(() => {
+      login.classList.add('visible');
+    }, 3000);
 
     function handleLogin(e) {
       e.preventDefault();
@@ -865,7 +634,7 @@
         setTimeout(() => {
           login.classList.remove('visible', 'fade-out');
           login.style.display = 'none';
-          introScreen.style.display = 'none';
+          intro.style.display = 'none';
           renderHosts();
           dash.classList.add('visible');
         }, 700);
