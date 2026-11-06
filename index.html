@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spectre</title>
-  <meta name="description" content="Spectre" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
@@ -72,7 +71,14 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.85);
     }
 
-    /* Screens */
+    .glass-soft {
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(20px) saturate(1.3);
+      -webkit-backdrop-filter: blur(20px) saturate(1.3);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
     .screen {
       position: fixed;
       inset: 0;
@@ -82,7 +88,7 @@
       z-index: 10;
     }
 
-    /* ── Intro title ── */
+    /* Intro */
     #intro-screen .title {
       font-family: 'Instrument Serif', Georgia, serif;
       font-style: italic;
@@ -100,30 +106,26 @@
     }
 
     @keyframes titleIn {
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
-
     @keyframes titleOut {
-      to {
-        opacity: 0;
-        transform: translateY(-16px) scale(1.02);
-        filter: blur(6px);
-      }
+      to { opacity: 0; transform: translateY(-16px) scale(1.02); filter: blur(6px); }
     }
 
-    /* ── Login screen ── */
+    /* Login */
     #login-screen {
       opacity: 0;
       pointer-events: none;
       transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
     #login-screen.visible {
       opacity: 1;
       pointer-events: auto;
+    }
+    #login-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .login-card {
@@ -139,27 +141,17 @@
         opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1),
         filter 1.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
     #login-screen.visible .login-card {
       transform: translateY(0) scale(1);
       opacity: 1;
       filter: blur(0);
     }
-
-    /* Stagger children slightly after card settles */
     .login-card > * {
       opacity: 0;
       transform: translateY(10px);
-      transition:
-        opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
-    #login-screen.visible .login-card > * {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
+    #login-screen.visible .login-card > * { opacity: 1; transform: translateY(0); }
     #login-screen.visible .login-card > *:nth-child(1) { transition-delay: 0.25s; }
     #login-screen.visible .login-card > *:nth-child(2) { transition-delay: 0.35s; }
     #login-screen.visible .login-card > *:nth-child(3) { transition-delay: 0.45s; }
@@ -178,9 +170,7 @@
       outline: none;
       transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
     }
-
     input::placeholder { color: #a1a1aa; }
-
     input:focus {
       background: rgba(255, 255, 255, 0.75);
       border-color: rgba(113, 113, 122, 0.4);
@@ -200,13 +190,9 @@
       transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
       box-shadow: 0 4px 14px rgba(0,0,0,0.12);
     }
-
-    .btn-primary:hover {
-      background: #18181b;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.16);
-    }
-
+    .btn-primary:hover { background: #18181b; box-shadow: 0 6px 20px rgba(0,0,0,0.16); }
     .btn-primary:active { transform: scale(0.985); }
+    .btn-primary:disabled { opacity: 0.7; cursor: wait; }
 
     .divider {
       display: flex;
@@ -216,9 +202,7 @@
       font-size: 0.75rem;
       letter-spacing: 0.04em;
     }
-
-    .divider::before,
-    .divider::after {
+    .divider::before, .divider::after {
       content: '';
       flex: 1;
       height: 1px;
@@ -231,8 +215,131 @@
       font-size: 0.8125rem;
       transition: color 0.2s ease;
     }
-
     .link:hover { color: #18181b; }
+
+    /* Dashboard */
+    #dashboard-screen {
+      opacity: 0;
+      pointer-events: none;
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 0;
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #dashboard-screen.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .dash-shell {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem;
+      gap: 1rem;
+    }
+
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.25rem;
+      border-radius: 1.25rem;
+    }
+
+    .host-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+      overflow-y: auto;
+      padding: 0.25rem;
+      flex: 1;
+    }
+
+    .host-card {
+      border-radius: 1.25rem;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease, box-shadow 0.35s ease;
+    }
+    .host-card:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.55);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 9999px;
+      flex-shrink: 0;
+    }
+    .status-online { background: #34d399; box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.25); }
+    .status-idle { background: #fbbf24; box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.25); }
+    .status-offline { background: #a1a1aa; box-shadow: 0 0 0 3px rgba(161, 161, 170, 0.2); }
+
+    /* Host detail */
+    #host-screen {
+      opacity: 0;
+      pointer-events: none;
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 0;
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #host-screen.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .cmd-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.35rem;
+      padding: 1rem 1.15rem;
+      border-radius: 1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.2s ease;
+      border: none;
+      width: 100%;
+      color: inherit;
+      font: inherit;
+    }
+    .cmd-btn:hover {
+      background: rgba(255, 255, 255, 0.55);
+      transform: translateY(-1px);
+    }
+    .cmd-btn:active { transform: scale(0.99); }
+
+    .output-panel {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.8rem;
+      line-height: 1.55;
+      color: #3f3f46;
+      white-space: pre-wrap;
+      min-height: 140px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 0.75rem;
+      font-size: 0.8125rem;
+      color: #52525b;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .back-btn:hover {
+      background: rgba(255,255,255,0.5);
+      color: #18181b;
+    }
   </style>
 </head>
 <body>
@@ -255,19 +362,17 @@
       <form id="login-form" class="space-y-4" onsubmit="handleLogin(event)">
         <div>
           <label class="block text-xs font-medium text-zinc-500 mb-1.5 ml-0.5">Email</label>
-          <input type="email" name="email" placeholder="you@example.com" required autocomplete="email" />
+          <input type="email" name="email" placeholder="you@example.com" required autocomplete="email" value="operator@spectre.local" />
         </div>
         <div>
           <div class="flex items-center justify-between mb-1.5">
             <label class="text-xs font-medium text-zinc-500 ml-0.5">Password</label>
             <a href="#" class="link">Forgot?</a>
           </div>
-          <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password" />
+          <input type="password" name="password" placeholder="••••••••" required autocomplete="current-password" value="spectre" />
         </div>
 
-        <button type="submit" class="btn-primary mt-2">
-          Continue
-        </button>
+        <button type="submit" class="btn-primary mt-2">Continue</button>
       </form>
 
       <div class="divider my-6">or</div>
@@ -278,25 +383,298 @@
       </button>
 
       <p class="mt-7 text-center text-xs text-zinc-500">
-        No account yet? <a href="#" class="link font-medium">Request access</a>
+        Demo: any credentials work · prefilled for speed
       </p>
     </div>
   </div>
 
-  <script>
-    const login = document.getElementById('login-screen');
+  <!-- DASHBOARD: Hosts -->
+  <div id="dashboard-screen" class="screen">
+    <div class="dash-shell">
+      <header class="dash-header glass-deep">
+        <div class="flex items-center gap-3">
+          <span class="font-serif italic text-xl text-zinc-800">Spectre</span>
+          <span class="text-xs text-zinc-400 px-2 py-0.5 rounded-full glass-soft">operator</span>
+        </div>
+        <div class="flex items-center gap-4 text-sm text-zinc-500">
+          <span><span id="online-count">3</span> online</span>
+          <button onclick="logout()" class="link">Sign out</button>
+        </div>
+      </header>
 
-    // Title fades out via CSS (titleOut starts at 2.6s)
-    // Reveal login just as the title is disappearing
-    setTimeout(() => {
-      login.classList.add('visible');
-    }, 3000);
+      <div class="px-1">
+        <h1 class="text-lg font-medium text-zinc-800">Hosts</h1>
+        <p class="text-sm text-zinc-500 mt-0.5">Clients under control</p>
+      </div>
+
+      <div class="host-grid" id="host-grid"></div>
+    </div>
+  </div>
+
+  <!-- HOST DETAIL -->
+  <div id="host-screen" class="screen">
+    <div class="dash-shell">
+      <header class="dash-header glass-deep">
+        <div class="flex items-center gap-3">
+          <button class="back-btn" onclick="backToHosts()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Hosts
+          </button>
+          <div class="h-4 w-px bg-zinc-300"></div>
+          <div class="flex items-center gap-2">
+            <span id="host-status-dot" class="status-dot status-online"></span>
+            <span id="host-name" class="font-medium text-zinc-800">—</span>
+          </div>
+        </div>
+        <div class="text-sm text-zinc-500" id="host-meta">—</div>
+      </header>
+
+      <div class="flex-1 grid lg:grid-cols-[1fr_1.1fr] gap-4 min-h-0 overflow-hidden">
+        <!-- Commands -->
+        <div class="glass-deep rounded-2xl p-5 flex flex-col min-h-0 overflow-hidden">
+          <h2 class="text-sm font-medium text-zinc-600 mb-3">Commands</h2>
+          <div class="grid sm:grid-cols-2 gap-2 overflow-y-auto pr-1" id="cmd-grid"></div>
+        </div>
+
+        <!-- Output -->
+        <div class="glass-deep rounded-2xl p-5 flex flex-col min-h-0">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-medium text-zinc-600">Output</h2>
+            <button onclick="clearOutput()" class="text-xs text-zinc-400 hover:text-zinc-600 transition">Clear</button>
+          </div>
+          <div class="glass-soft rounded-xl p-4 flex-1 overflow-y-auto">
+            <div class="output-panel" id="output">Ready. Select a command.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Fake hosts ──────────────────────────────────────────────
+    const hosts = [
+      {
+        id: 'h1',
+        name: 'WORKSTATION-04',
+        os: 'Windows 11 Pro',
+        ip: '10.0.14.22',
+        user: 'j.miller',
+        status: 'online',
+        lastSeen: 'Just now',
+        latency: '18 ms'
+      },
+      {
+        id: 'h2',
+        name: 'macbook-pro-m2',
+        os: 'macOS Sequoia',
+        ip: '10.0.14.41',
+        user: 'a.chen',
+        status: 'online',
+        lastSeen: '12s ago',
+        latency: '24 ms'
+      },
+      {
+        id: 'h3',
+        name: 'ubuntu-build-07',
+        os: 'Ubuntu 24.04 LTS',
+        ip: '10.0.15.8',
+        user: 'deploy',
+        status: 'online',
+        lastSeen: 'Just now',
+        latency: '11 ms'
+      },
+      {
+        id: 'h4',
+        name: 'DESKTOP-FINANCE',
+        os: 'Windows 10 Enterprise',
+        ip: '10.0.12.90',
+        user: 'r.patel',
+        status: 'idle',
+        lastSeen: '4m ago',
+        latency: '—'
+      },
+      {
+        id: 'h5',
+        name: 'lab-pi-03',
+        os: 'Raspberry Pi OS',
+        ip: '10.0.20.3',
+        user: 'pi',
+        status: 'offline',
+        lastSeen: '2h ago',
+        latency: '—'
+      }
+    ];
+
+    const commands = [
+      { id: 'sysinfo', label: 'System info', desc: 'OS, CPU, memory, uptime' },
+      { id: 'shell', label: 'Shell', desc: 'Open interactive shell' },
+      { id: 'screenshot', label: 'Screenshot', desc: 'Capture current display' },
+      { id: 'processes', label: 'Processes', desc: 'List running processes' },
+      { id: 'files', label: 'File browser', desc: 'Browse remote filesystem' },
+      { id: 'net', label: 'Network', desc: 'Interfaces, connections' },
+      { id: 'clipboard', label: 'Clipboard', desc: 'Read remote clipboard' },
+      { id: 'keylog', label: 'Input log', desc: 'Keystroke buffer (placeholder)' },
+      { id: 'persist', label: 'Persistence', desc: 'Check / manage implants' },
+      { id: 'transfer', label: 'Transfer', desc: 'Upload / download files' }
+    ];
+
+    const fakeOutputs = {
+      sysinfo: `Hostname: {{name}}
+OS:        {{os}}
+User:      {{user}}
+IP:        {{ip}}
+Uptime:    14h 22m
+CPU:       12% · 8 cores
+Memory:    6.4 / 16 GB
+Disk:      128 GB free`,
+      shell: `$ whoami
+{{user}}
+$ pwd
+/home/{{user}}
+$ # interactive shell placeholder`,
+      screenshot: `[screenshot] Captured primary display (1920×1080)
+Saved → /tmp/spectre_shot_{{id}}.png
+(placeholder — no real capture)`,
+      processes: `PID   NAME              CPU    MEM
+1284  explorer.exe      0.4%   48M
+2401  chrome.exe        12%    610M
+3012  Code.exe          3.1%   290M
+… (placeholder list)`,
+      files: `/home/{{user}}
+  Documents/
+  Downloads/
+  .config/
+  notes.txt
+(placeholder file tree)`,
+      net: `eth0  {{ip}}  up
+tcp   443  established  ×4
+tcp   22   listening
+(placeholder)`,
+      clipboard: `[clipboard] "meeting notes – Q4 roadmap"
+(placeholder)`,
+      keylog: `[input] buffer empty · last activity 2m ago
+(placeholder)`,
+      persist: `Implant: spectre-agent v0.1
+Status:  running
+Method:  (placeholder)
+Last check-in: {{lastSeen}}`,
+      transfer: `Ready for transfer.
+Drag files here or use put / get.
+(placeholder)`
+    };
+
+    let currentHost = null;
+
+    // ── Screens ─────────────────────────────────────────────────
+    const intro = document.getElementById('intro-screen');
+    const login = document.getElementById('login-screen');
+    const dash = document.getElementById('dashboard-screen');
+    const hostScreen = document.getElementById('host-screen');
+
+    setTimeout(() => login.classList.add('visible'), 3000);
 
     function handleLogin(e) {
       e.preventDefault();
       const btn = e.target.querySelector('button[type="submit"]');
       btn.textContent = 'Entering…';
       btn.disabled = true;
+
+      setTimeout(() => {
+        login.classList.add('fade-out');
+        setTimeout(() => {
+          login.classList.remove('visible', 'fade-out');
+          login.style.display = 'none';
+          intro.style.display = 'none';
+          renderHosts();
+          dash.classList.add('visible');
+        }, 700);
+      }, 600);
+    }
+
+    function logout() {
+      location.reload();
+    }
+
+    function renderHosts() {
+      const grid = document.getElementById('host-grid');
+      const online = hosts.filter(h => h.status === 'online').length;
+      document.getElementById('online-count').textContent = online;
+
+      grid.innerHTML = hosts.map(h => `
+        <div class="host-card glass" onclick="openHost('${h.id}')">
+          <div class="flex items-start justify-between gap-2 mb-3">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="status-dot status-${h.status}"></span>
+              <span class="font-medium text-zinc-800 truncate">${h.name}</span>
+            </div>
+            <span class="text-[11px] text-zinc-400 uppercase tracking-wide">${h.status}</span>
+          </div>
+          <div class="space-y-1 text-sm text-zinc-500">
+            <div class="truncate">${h.os}</div>
+            <div class="flex justify-between gap-2">
+              <span>${h.ip}</span>
+              <span class="text-zinc-400">${h.user}</span>
+            </div>
+            <div class="text-xs text-zinc-400 pt-1">${h.lastSeen}${h.latency !== '—' ? ' · ' + h.latency : ''}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openHost(id) {
+      currentHost = hosts.find(h => h.id === id);
+      if (!currentHost) return;
+
+      document.getElementById('host-name').textContent = currentHost.name;
+      document.getElementById('host-meta').textContent =
+        `${currentHost.os} · ${currentHost.ip} · ${currentHost.user}`;
+
+      const dot = document.getElementById('host-status-dot');
+      dot.className = `status-dot status-${currentHost.status}`;
+
+      const cmdGrid = document.getElementById('cmd-grid');
+      cmdGrid.innerHTML = commands.map(c => `
+        <button class="cmd-btn glass-soft" onclick="runCommand('${c.id}')">
+          <span class="font-medium text-zinc-800 text-sm">${c.label}</span>
+          <span class="text-xs text-zinc-500">${c.desc}</span>
+        </button>
+      `).join('');
+
+      document.getElementById('output').textContent = 'Ready. Select a command.';
+
+      dash.classList.remove('visible');
+      setTimeout(() => {
+        hostScreen.classList.add('visible');
+      }, 200);
+    }
+
+    function backToHosts() {
+      hostScreen.classList.remove('visible');
+      setTimeout(() => {
+        dash.classList.add('visible');
+      }, 200);
+    }
+
+    function runCommand(id) {
+      const tpl = fakeOutputs[id] || 'Command acknowledged (placeholder).';
+      const h = currentHost;
+      const text = tpl
+        .replaceAll('{{name}}', h.name)
+        .replaceAll('{{os}}', h.os)
+        .replaceAll('{{user}}', h.user)
+        .replaceAll('{{ip}}', h.ip)
+        .replaceAll('{{id}}', h.id)
+        .replaceAll('{{lastSeen}}', h.lastSeen);
+
+      const out = document.getElementById('output');
+      out.textContent = 'Running…';
+      setTimeout(() => {
+        out.textContent = text;
+      }, 350 + Math.random() * 400);
+    }
+
+    function clearOutput() {
+      document.getElementById('output').textContent = 'Ready. Select a command.';
     }
   </script>
 </body>
